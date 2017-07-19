@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Tekpub shopping cart with Ryan Niemeyer</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body>
+    <button data-bind="clickWithData: addItem"
+            data-description="Tekpub Yearly Subscription"
+            data-price="149.0"
+            data-sku="yearly">Buy</button>
+
+    <button data-bind="clickWithData: addItem"
+            data-description="Tekpub Forever Subscription"
+            data-price="10000.0"
+            data-sku="forever">Buy</button>
+
+    <h4>Your Cart</h4>
+    <div data-bind="visible : hasItems">
+      <form accept-charset="UTF-8" action="/gifts/create" id="checkoutForm" method="post">
+        <table>
+          <thead>
+            <th>Item</th>
+            <th>Qty.</th>
+            <th style="text-align: right; width: 20px">Price</th>
+            <th style="text-align: right; width: 20px">Disc.</th>
+            <th style="text-align: right; width: 20px">Total</th>
+          </thead>
+          <tbody data-bind="foreach: items">
+            <tr>
+              <td data-bind="text: description" style="width: 120px"></td>
+              <td>
+                <input data-bind="value : quantity" style="width: 24px" type="text">
+              </td>
+              <td data-bind="currency: subtotal" style="text-align: right"></td>
+              <td data-bind="currency: discount" style="text-align: right"></td>
+              <td data-bind="currency: lineTotal" style="text-align: right"></td>
+              <td>
+                <button data-bind="click: $parent.removeClicked" title="Delete" style="border: none; background: 0 0; cursor: pointer; color: #626262; font-size: 1.2em">
+                  <i class="fa fa-trash-o"></i>
+                  <input data-bind="value: sku" name="items[][sku]" type="hidden">
+                  <input data-bind="value: quantity" name="items[][qty]" type="hidden">
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="5" style="text-align: right; font-size: 19px">
+                <!-- total is ordinary function in vm (not observable), we must use the function call syntax. -->
+                <strong data-bind="currency: total()"></strong>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="5">
+                <button type="submit">
+                  Save & Checkout
+                </button>
+              </td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </form>
+      
+    </div>
+
+    <!-- Adding logical negation operator (!) to observable mandates function call () operator on its end. -->
+    <div data-bind="visible : !hasItems()">
+      <p>Select from the items on the left.</p>
+    </div>
+    <script type="text/javascript" src="js/knockout-2.1.0.debug.js"></script>
+    <script type="text/javascript" src="js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="src/extensions.js"></script>
+    <script type="text/javascript" src="src/customBindings.js"></script>
+    <script type="text/javascript" src="src/cart.js"></script>
+    <script type="text/javascript">
+      var cart = new Tekpub.Cart();
+      ko.applyBindings(cart);
+    </script>
+  </body>
+</html>
